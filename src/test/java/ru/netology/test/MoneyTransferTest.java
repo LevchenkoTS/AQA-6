@@ -83,7 +83,7 @@ public class MoneyTransferTest {
 
     @Test
     void shouldNotTransferMoneyOverLimitFromSecondCard() {
-        val amountToTransfer = 15_000;
+        val amountToTransfer = 30_000;
         var dashboardPage = new DashboardPage();
         val firstBalanceFirstCard = new DashboardPage().getCardBalance(DataHelper.getFirstCard().getSecretCardId());
         val firstBalanceSecondCard = new DashboardPage().getCardBalance(DataHelper.getSecondCard().getSecretCardId());
