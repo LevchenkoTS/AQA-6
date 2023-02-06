@@ -30,18 +30,15 @@ public class MoneyTransferTest {
     void shouldTransferMoneyBetweenOwnCards() {
         val amountToTransfer = 5000;
         var dashboardPage = new DashboardPage();
-        val firstBalanceFirstCard = new DashboardPage().getCardBalance(DataHelper.getFirstCard().getSecretCardId());
-        val firstBalanceSecondCard = new DashboardPage().getCardBalance(DataHelper.getSecondCard().getSecretCardId());
 
         var cardsPage = dashboardPage.chooseCard(DataHelper.getSecondCard().getSecretCardId());
         var dashboard = cardsPage.moneyTransfer(String.valueOf(amountToTransfer), DataHelper.getFirstCard().getCardId());
-        $(withText("Ваши карты")).shouldBe(visible);
 
-        val balanceFirstCard = firstBalanceFirstCard - amountToTransfer;
-        val balanceSecondCard = firstBalanceSecondCard + amountToTransfer;
+        val expectedBalanceFirstCard = dashboardPage.getCardBalance(DataHelper.getFirstCard().getSecretCardId());
+        val expectedBalanceSecondCard = dashboardPage.getCardBalance(DataHelper.getSecondCard().getSecretCardId());
 
-        assertEquals(balanceFirstCard, new DashboardPage().getCardBalance(DataHelper.getFirstCard().getSecretCardId()));
-        assertEquals(balanceSecondCard, new DashboardPage().getCardBalance(DataHelper.getSecondCard().getSecretCardId()));
+        assertEquals(expectedBalanceFirstCard, new DashboardPage().getCardBalance(DataHelper.getFirstCard().getSecretCardId()));
+        assertEquals(expectedBalanceSecondCard, new DashboardPage().getCardBalance(DataHelper.getSecondCard().getSecretCardId()));
     }
 
 
@@ -49,53 +46,46 @@ public class MoneyTransferTest {
     void shouldTransferMoneyBetweenOwnCards2() {
         val amountToTransfer = 1_000;
         var dashboardPage = new DashboardPage();
-        val firstBalanceFirstCard = new DashboardPage().getCardBalance(DataHelper.getFirstCard().getSecretCardId());
-        val firstBalanceSecondCard = new DashboardPage().getCardBalance(DataHelper.getSecondCard().getSecretCardId());
+
+        var cardsPage = dashboardPage.chooseCard(DataHelper.getFirstCard().getSecretCardId());
+        var dashboard = cardsPage.moneyTransfer(String.valueOf(amountToTransfer), DataHelper.getSecondCard().getCardId());
+
+        val expectedBalanceFirstCard = dashboardPage.getCardBalance(DataHelper.getFirstCard().getSecretCardId());
+        val expectedBalanceSecondCard = dashboardPage.getCardBalance(DataHelper.getSecondCard().getSecretCardId());
+
+        assertEquals(expectedBalanceFirstCard, new DashboardPage().getCardBalance(DataHelper.getFirstCard().getSecretCardId()));
+        assertEquals(expectedBalanceSecondCard, new DashboardPage().getCardBalance(DataHelper.getSecondCard().getSecretCardId()));
+    }
+
+    @Test
+    void shouldNotTransferMoneyOverLimitFromFirstCard() {
+        val amountToTransfer = 15_000;
+        var dashboardPage = new DashboardPage();
+
+        var cardsPage = dashboardPage.chooseCard(DataHelper.getSecondCard().getSecretCardId());
+        var dashboard = cardsPage.moneyTransfer(String.valueOf(amountToTransfer), DataHelper.getFirstCard().getCardId());
+        $(withText("Ваши карты")).shouldBe(visible);
+
+        val balanceFirstCard = dashboardPage.getCardBalance(DataHelper.getFirstCard().getSecretCardId());
+        val balanceSecondCard = dashboardPage.getCardBalance(DataHelper.getSecondCard().getSecretCardId());
+
+        assertTrue(balanceFirstCard > balanceSecondCard);
+        assertTrue(balanceFirstCard >= 0);
+    }
+
+    @Test
+    void shouldNotTransferMoneyOverLimitFromSecondCard() {
+        val amountToTransfer = 30_000;
+        var dashboardPage = new DashboardPage();
 
         var cardsPage = dashboardPage.chooseCard(DataHelper.getFirstCard().getSecretCardId());
         var dashboard = cardsPage.moneyTransfer(String.valueOf(amountToTransfer), DataHelper.getSecondCard().getCardId());
         $(withText("Ваши карты")).shouldBe(visible);
 
-        val balanceFirstCard = firstBalanceFirstCard + amountToTransfer;
-        val balanceSecondCard = firstBalanceSecondCard - amountToTransfer;
+        val balanceFirstCard = dashboardPage.getCardBalance(DataHelper.getFirstCard().getSecretCardId());
+        val balanceSecondCard = dashboardPage.getCardBalance(DataHelper.getSecondCard().getSecretCardId());
 
-        assertEquals(balanceFirstCard, new DashboardPage().getCardBalance(DataHelper.getFirstCard().getSecretCardId()));
-        assertEquals(balanceSecondCard, new DashboardPage().getCardBalance(DataHelper.getSecondCard().getSecretCardId()));
+        assertTrue(balanceFirstCard > balanceSecondCard);
+        assertTrue(balanceSecondCard >= 0);
     }
-
-//    @Test
-//    void shouldNotTransferMoneyOverLimitFromFirstCard() {
-//        val amountToTransfer = 15_000;
-//        var dashboardPage = new DashboardPage();
-//        val firstBalanceFirstCard = new DashboardPage().getCardBalance(DataHelper.getSecondCard().getSecretCardId());
-//        val firstBalanceSecondCard = new DashboardPage().getCardBalance(DataHelper.getFirstCard().getSecretCardId());
-//
-//        var cardsPage = dashboardPage.chooseCard(DataHelper.getSecondCard().getSecretCardId());
-//        var dashboard = cardsPage.moneyTransfer(String.valueOf(amountToTransfer), DataHelper.getFirstCard().getCardId());
-//        $(withText("Ваши карты")).shouldBe(visible);
-//
-//        val balanceFirstCard = firstBalanceFirstCard - amountToTransfer;
-//        val balanceSecondCard = firstBalanceSecondCard + amountToTransfer;
-//
-//        assertTrue(balanceFirstCard > balanceSecondCard);
-//        assertTrue(balanceFirstCard >= 0);
-//    }
-//
-//    @Test
-//    void shouldNotTransferMoneyOverLimitFromSecondCard() {
-//        val amountToTransfer = 30_000;
-//        var dashboardPage = new DashboardPage();
-//        val firstBalanceFirstCard = new DashboardPage().getCardBalance(DataHelper.getFirstCard().getSecretCardId());
-//        val firstBalanceSecondCard = new DashboardPage().getCardBalance(DataHelper.getSecondCard().getSecretCardId());
-//
-//        var cardsPage = dashboardPage.chooseCard(DataHelper.getFirstCard().getSecretCardId());
-//        var dashboard = cardsPage.moneyTransfer(String.valueOf(amountToTransfer), DataHelper.getSecondCard().getCardId());
-//        $(withText("Ваши карты")).shouldBe(visible);
-//
-//        val balanceFirstCard = firstBalanceFirstCard + amountToTransfer;
-//        val balanceSecondCard = firstBalanceSecondCard - amountToTransfer;
-//
-//        assertTrue(balanceFirstCard > balanceSecondCard);
-//        assertTrue(balanceSecondCard >= 0);
-//    }
 }
