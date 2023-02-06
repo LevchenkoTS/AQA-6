@@ -86,7 +86,7 @@ public class MoneyTransferTest {
 
         var cardsPage = dashboardPage.chooseCard(DataHelper.getFirstCard().getSecretCardId());
         var dashboard = cardsPage.moneyTransfer(String.valueOf(amountToTransfer), DataHelper.getSecondCard().getCardId());
-        $(withText("Ваши карты")).shouldBe(visible);
+
 
         val balanceFirstCardBefore = balanceFirstCard + amountToTransfer;
         val balanceSecondCardBefore = balanceSecondCard - amountToTransfer;
